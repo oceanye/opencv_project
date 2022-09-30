@@ -1,8 +1,15 @@
 import numpy as np
 import cv2 as cv
+
+##qr_persective
+##完成图片倾斜校正
+##计算每个像素点mm尺寸 size_ratio
+##引如wechat二维码识别
+
 img = cv.imread('mid1.jpg',0)
 #img = cv.medianBlur(img,5)
 cimg = cv.cvtColor(img,cv.COLOR_GRAY2BGR)
+
 
 
 
