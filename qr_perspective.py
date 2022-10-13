@@ -8,7 +8,6 @@ import time
 def Img_Outline(input_dir):
     original_img = cv2.imread(input_dir)
 
-
     gray_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray_img, (9, 9), 0)  # 高斯模糊去噪（设定卷积核大小影响效果）
     _, RedThresh = cv2.threshold(blurred, 165, 255, cv2.THRESH_BINARY)  # 设定阈值165（阈值影响开闭运算效果）
@@ -46,24 +45,22 @@ def Perspective_transform(box, original_img):
     M = cv2.getPerspectiveTransform(pts1, pts2)
     result_img = cv2.warpPerspective(original_img, M, (int(orignal_W + 3), int(orignal_H + 1)))
 
-    code_size = (orignal_W + orignal_H)/2
+    code_size = (orignal_W + orignal_H) / 2
 
-    return result_img,code_size
+    return result_img, code_size
 
 
-def size_ratio(code_size, org_size):
-    ratio =  org_size /code_size #mm/像素点
+def size_ratio(code_pixel, standard_qr_size):
+    ratio = standard_qr_size / code_pixel  # mm/像素点
     return ratio
 
 
 if __name__ == "__main__":
     input_dir = "qrcode.jpg"
 
-
-
     original_img, gray_img, RedThresh, closed, opened = Img_Outline(input_dir)
     box, draw_img = findContours_img(original_img, opened)
-    result_img , code_size = Perspective_transform(box, original_img)
+    result_img, code_size = Perspective_transform(box, original_img)
     cv2.imshow("original", original_img)
     cv2.imshow("gray", gray_img)
     cv2.imshow("closed", closed)
@@ -77,15 +74,15 @@ if __name__ == "__main__":
     _, points, _ = qrCodeDetector.detectAndDecode(result_img)
     print(points)
 
-
-
     WechatQRmodel = cv2.wechat_qrcode_WeChatQRCode('detect.prototxt', 'detect.caffemodel', 'sr.prototxt',
                                                    'sr.caffemodel')
     start = time.time()
     codeinfo, pts = WechatQRmodel.detectAndDecode(result_img)
     end = time.time()
 
-    print('size ratio is ', size_ratio(code_size,50)) # mm/像素点
+
+    print('QR code info is',codeinfo[0])
+    print('size ratio is ', round(size_ratio(code_size, 50) * 100) / 100, 'mm/pixel')  # mm/像素点
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()

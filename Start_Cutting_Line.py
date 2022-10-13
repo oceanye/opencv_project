@@ -19,7 +19,7 @@ def point_distance_line(point,line_point1,line_point2): #line_point = np.array([
     return distance
 
 
-# 获取直线 与 点的垂足
+## 获取直线 与 点的垂足
 def get_foot(start_point, end_point, point_a):
     start_x, start_y = start_point
     end_x, end_y = end_point
